@@ -1,5 +1,12 @@
 import React from "react";
-import { Form, redirect, useFetcher, useLoaderData, useNavigate } from "react-router-dom";
+import {
+  Form,
+  redirect,
+  useFetcher,
+  useLoaderData,
+  useNavigate,
+  useNavigation,
+} from "react-router-dom";
 
 // Define the shape of the loader data
 type LoaderData = {
@@ -44,17 +51,30 @@ export async function loader({
 
 // React component that uses the loader data
 const Post: React.FC = () => {
-  const navigate= useNavigate()
-  const data = useLoaderData() as any;
-  const fetcher = useFetcher();
+   const data = useLoaderData() as any;
+  const navigate = useNavigate();
+  const navigation = useNavigation();
+    const fetcher = useFetcher();
+  const IsNavigating = Boolean(navigation.location);
+  if (IsNavigating) {
+    return <p>Loading Ahmad Sharafat...</p>;
+  }
+ 
+
   const isDeleted = fetcher.data?.isDeleted;
+  const isDeleting = fetcher.state === "submitting";
+  if (isDeleting) {
+    return <p>Deleting post...</p>;
+  }
   return (
     <div>
       {!isDeleted && (
         <>
           <p>Post: {data.title}</p>
           <p>Body: {data.body}</p>
-          <button type="submit" onClick={() => navigate("/")}>Redirect</button>
+          <button type="submit" onClick={() => navigate("/")}>
+            Redirect
+          </button>
           <fetcher.Form method="delete">
             <button type="submit">Delete</button>
           </fetcher.Form>
